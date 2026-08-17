@@ -1,7 +1,26 @@
 import React, { useState, useMemo } from 'react';
 import { NandaItem } from '../types';
-import { NANDA_DATABASE, NANDA_DOMAINS } from '../data/nandaData';
-import { Search, X, Check, BookOpen, Sparkles, Filter, ChevronRight, ShieldAlert, HeartPulse, Activity, Droplets, Zap, Brain, HelpCircle, Wind } from 'lucide-react';
+import { NANDA_DATABASE, NANDA_CATEGORIES, NANDA_DOMAINS } from '../data/nandaData';
+import {
+  Search,
+  X,
+  Check,
+  BookOpen,
+  Filter,
+  Eye,
+  Flame,
+  Baby,
+  Brain,
+  Scissors,
+  Stethoscope,
+  Activity,
+  HeartPulse,
+  Droplets,
+  Shield,
+  Layers,
+  HelpCircle,
+  Wind,
+} from 'lucide-react';
 
 interface NandaSearchModalProps {
   isOpen: boolean;
@@ -22,7 +41,8 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
   currentDiagnosis = '',
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState('All Domains');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
+  const [selectedDomain, setSelectedDomain] = useState<string>('All Domains');
   const [activeItem, setActiveItem] = useState<NandaItem>(NANDA_DATABASE[0]);
 
   // Selected suggestions for the active item
@@ -30,32 +50,43 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
   const [selectedOutcomes, setSelectedOutcomes] = useState<string[]>([]);
   const [selectedInterventions, setSelectedInterventions] = useState<string[]>([]);
 
-  // When active item changes, reset selected items to default all or first ones
+  // When active item changes, reset selected items to default all
   const handleSelectActiveItem = (item: NandaItem) => {
     setActiveItem(item);
-    setSelectedFactors(item.suggestedRelatedFactors);
-    setSelectedOutcomes(item.suggestedExpectedOutcomes);
-    setSelectedInterventions(item.suggestedInterventions);
+    setSelectedFactors(item.suggestedRelatedFactors || []);
+    setSelectedOutcomes(item.suggestedExpectedOutcomes || []);
+    setSelectedInterventions(item.suggestedInterventions || []);
   };
 
-  // Filter diagnoses
+  // Filter diagnoses based on Category, Domain, and Search Term
   const filteredList = useMemo(() => {
     return NANDA_DATABASE.filter((item) => {
+      // Category matching
+      const matchesCategory =
+        selectedCategory === 'All Categories' ||
+        item.category === selectedCategory ||
+        (item.categories && item.categories.includes(selectedCategory));
+
+      // Domain matching
       const matchesDomain =
         selectedDomain === 'All Domains' || item.domain === selectedDomain;
+
+      // Query matching
       const query = searchTerm.toLowerCase().trim();
       const matchesSearch =
         !query ||
         item.diagnosis.toLowerCase().includes(query) ||
         (item.code && item.code.includes(query)) ||
+        item.category.toLowerCase().includes(query) ||
+        (item.categories && item.categories.some((c) => c.toLowerCase().includes(query))) ||
         item.domain.toLowerCase().includes(query) ||
         item.definition.toLowerCase().includes(query) ||
         item.suggestedRelatedFactors.some((f) => f.toLowerCase().includes(query)) ||
         item.suggestedInterventions.some((i) => i.toLowerCase().includes(query));
 
-      return matchesDomain && matchesSearch;
+      return matchesCategory && matchesDomain && matchesSearch;
     });
-  }, [searchTerm, selectedDomain]);
+  }, [searchTerm, selectedCategory, selectedDomain]);
 
   // Initialize selection when modal opens
   React.useEffect(() => {
@@ -102,22 +133,38 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
     onClose();
   };
 
-  const getDomainIcon = (domain: string) => {
-    switch (domain) {
-      case 'Comfort & Pain':
-        return <HeartPulse className="w-4 h-4 text-rose-600" />;
-      case 'Safety & Protection':
-        return <ShieldAlert className="w-4 h-4 text-amber-600" />;
-      case 'Cardiopulmonary & Oxygenation':
-        return <Wind className="w-4 h-4 text-sky-600" />;
-      case 'Nutrition & Hydration':
-        return <Droplets className="w-4 h-4 text-cyan-600" />;
-      case 'Activity & Rest':
-        return <Activity className="w-4 h-4 text-emerald-600" />;
-      case 'Neuro & Coping':
-        return <Brain className="w-4 h-4 text-purple-600" />;
+  const getCategoryIcon = (cat: string) => {
+    switch (cat) {
+      case 'CCU/ICU':
+        return <Activity className="w-3.5 h-3.5 text-rose-600" />;
+      case 'Medical':
+        return <Stethoscope className="w-3.5 h-3.5 text-blue-600" />;
+      case 'Surgical':
+        return <Scissors className="w-3.5 h-3.5 text-amber-600" />;
+      case 'Ophthalmology':
+        return <Eye className="w-3.5 h-3.5 text-indigo-600" />;
+      case 'Oncology':
+        return <Shield className="w-3.5 h-3.5 text-purple-600" />;
+      case 'Gynaecology':
+        return <HeartPulse className="w-3.5 h-3.5 text-pink-600" />;
+      case 'Paediatric':
+        return <Baby className="w-3.5 h-3.5 text-emerald-600" />;
+      case 'ENT':
+        return <Wind className="w-3.5 h-3.5 text-teal-600" />;
+      case 'Orthopedic':
+        return <Layers className="w-3.5 h-3.5 text-orange-600" />;
+      case 'Vascular':
+        return <HeartPulse className="w-3.5 h-3.5 text-red-600" />;
+      case 'Burn':
+        return <Flame className="w-3.5 h-3.5 text-amber-600" />;
+      case 'Haematology':
+        return <Droplets className="w-3.5 h-3.5 text-crimson-600 text-red-600" />;
+      case 'NICU':
+        return <Baby className="w-3.5 h-3.5 text-cyan-600" />;
+      case 'Psychiatry':
+        return <Brain className="w-3.5 h-3.5 text-violet-600" />;
       default:
-        return <BookOpen className="w-4 h-4 text-slate-600" />;
+        return <BookOpen className="w-3.5 h-3.5 text-slate-600" />;
     }
   };
 
@@ -129,24 +176,26 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
     >
       <div
         id="nanda-search-modal-container"
-        className="relative w-full max-w-5xl h-[88vh] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden text-slate-800"
+        className="relative w-full max-w-6xl h-[90vh] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden text-slate-800"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/80">
+        <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-200 bg-slate-50/90">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-xs">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                NANDA-I Nursing Diagnoses Taxonomy
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold text-slate-900">
+                  NANDA-I Nursing Problem List
+                </h2>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                  Search & Auto-Populate
+                  14 Clinical Categories
                 </span>
-              </h2>
+              </div>
               <p className="text-xs text-slate-500">
-                Select an evidence-based NANDA diagnosis and choose tailored etiology, outcomes, and interventions
+                Evidence-based nursing diagnoses organized by clinical specialties with tailored etiologies, outcomes, and interventions
               </p>
             </div>
           </div>
@@ -159,17 +208,18 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
           </button>
         </div>
 
-        {/* Search & Domain Filter Bar */}
-        <div className="px-6 py-3 border-b border-slate-200 bg-white flex flex-col gap-2">
+        {/* Search & Category Filter Section */}
+        <div className="px-6 py-3 border-b border-slate-200 bg-white flex flex-col gap-2.5">
+          {/* Search Bar */}
           <div className="relative">
             <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               id="nanda-search-input"
               type="text"
-              placeholder="Search by diagnosis name, code (e.g. 00132), symptom, or keyword (pain, gas exchange, falls, wound)..."
+              placeholder="Search by diagnosis, code (e.g. 00132), symptom, specialty (e.g. CCU/ICU, Paediatric, Burn), or keyword..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
               autoFocus
             />
             {searchTerm && (
@@ -182,24 +232,26 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
             )}
           </div>
 
-          {/* Domain Chips */}
+          {/* 14 Category Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
-            <span className="text-slate-400 font-medium mr-1 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" /> Domain:
+            <span className="text-slate-500 font-bold mr-1 flex items-center gap-1 shrink-0">
+              <Filter className="w-3.5 h-3.5 text-blue-600" /> Category:
             </span>
-            {NANDA_DOMAINS.map((domain) => {
-              const isSelected = selectedDomain === domain;
+            {NANDA_CATEGORIES.map((cat) => {
+              const isSelected = selectedCategory === cat;
               return (
                 <button
-                  key={domain}
-                  onClick={() => setSelectedDomain(domain)}
-                  className={`px-3 py-1 rounded-full font-medium whitespace-nowrap transition-all text-xs ${
+                  key={cat}
+                  id={`cat-filter-${cat.replace(/[\/\s]/g, '-').toLowerCase()}`}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1 rounded-full font-medium whitespace-nowrap transition-all text-xs flex items-center gap-1.5 shrink-0 ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-xs font-semibold'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                      ? 'bg-blue-600 text-white shadow-xs font-bold ring-1 ring-blue-700'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80'
                   }`}
                 >
-                  {domain}
+                  {cat !== 'All Categories' && getCategoryIcon(cat)}
+                  <span>{cat}</span>
                 </button>
               );
             })}
@@ -210,21 +262,25 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
         <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden bg-slate-50">
           {/* Left Column: Diagnosis List (5 Cols) */}
           <div className="md:col-span-5 border-r border-slate-200 overflow-y-auto bg-white p-3 space-y-2">
-            <div className="flex items-center justify-between px-2 py-1 text-xs font-semibold text-slate-500">
-              <span>Matching Diagnoses ({filteredList.length})</span>
-              <span className="text-[11px] text-slate-400">Click to select</span>
+            <div className="flex items-center justify-between px-2 py-1 text-xs font-semibold text-slate-500 border-b border-slate-100 pb-1.5">
+              <span>
+                {selectedCategory !== 'All Categories' ? `${selectedCategory} Diagnoses` : 'All Diagnoses'}{' '}
+                ({filteredList.length})
+              </span>
+              <span className="text-[11px] text-slate-400">Click to preview & select</span>
             </div>
 
             {filteredList.length === 0 ? (
               <div className="text-center py-12 px-4">
                 <HelpCircle className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-slate-700">No NANDA diagnoses match your search</p>
+                <p className="text-sm font-semibold text-slate-700">No NANDA diagnoses match your filters</p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Try searching for keywords like "pain", "infection", "mobility", "respiratory", or "fluid".
+                  Try clearing your search term or switching to "All Categories".
                 </p>
                 <button
                   onClick={() => {
                     setSearchTerm('');
+                    setSelectedCategory('All Categories');
                     setSelectedDomain('All Domains');
                   }}
                   className="mt-3 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold rounded-lg border border-blue-200"
@@ -237,7 +293,7 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
                 const isActive = activeItem.diagnosis === item.diagnosis;
                 return (
                   <button
-                    key={item.diagnosis}
+                    key={`${item.diagnosis}-${item.category}`}
                     id={`nanda-item-${item.code || item.diagnosis.replace(/\s+/g, '-').toLowerCase()}`}
                     onClick={() => handleSelectActiveItem(item)}
                     className={`w-full text-left p-3 rounded-lg border transition-all flex flex-col gap-1.5 ${
@@ -248,25 +304,25 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-1.5">
-                        {getDomainIcon(item.domain)}
+                        {getCategoryIcon(item.category)}
                         <span className="font-bold text-sm text-slate-900 leading-tight">
                           {item.diagnosis}
                         </span>
                       </div>
                       {item.code && (
-                        <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                        <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
                           #{item.code}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                      <span className="font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                        {item.category}
+                      </span>
                       <span className="font-medium text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
                         {item.domain}
                       </span>
-                      {item.classCategory && (
-                        <span className="text-slate-400">• {item.classCategory}</span>
-                      )}
                     </div>
 
                     <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
@@ -284,21 +340,26 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {/* Active Diagnosis Overview Banner */}
                 <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-white flex items-center gap-1 shadow-xs">
+                        {getCategoryIcon(activeItem.category)}
+                        {activeItem.category}
+                      </span>
                       <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                         {activeItem.domain}
                       </span>
-                      {activeItem.code && (
-                        <span className="text-xs font-mono text-slate-500 font-semibold">
-                          Code: {activeItem.code}
-                        </span>
-                      )}
                     </div>
+                    {activeItem.code && (
+                      <span className="text-xs font-mono text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                        Code: #{activeItem.code}
+                      </span>
+                    )}
                   </div>
+
                   <h3 className="text-lg font-bold text-slate-900">{activeItem.diagnosis}</h3>
                   <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                    <strong className="text-slate-700">Definition: </strong>
+                    <strong className="text-slate-700">Clinical Definition: </strong>
                     {activeItem.definition}
                   </p>
                 </div>
@@ -315,7 +376,7 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    Select the contributing pathophysiology, surgical causes, or conditions to include in this care plan:
+                    Select the contributing pathophysiology, surgical factors, or conditions for this care plan:
                   </p>
                   <div className="space-y-1.5">
                     {activeItem.suggestedRelatedFactors.map((factor, idx) => {
@@ -386,7 +447,7 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                      3. Nursing Interventions & Rationales (NIC)
+                      3. Nursing Interventions & Action Plan (NIC)
                     </h4>
                     <span className="text-[11px] text-slate-500 font-medium">
                       {selectedInterventions.length} selected
@@ -422,7 +483,7 @@ export const NandaSearchModal: React.FC<NandaSearchModalProps> = ({
               </div>
             ) : (
               <div className="flex-1 flex items-center justify-center p-8 text-center text-slate-400">
-                Select a diagnosis from the left column to view suggestions.
+                Select a diagnosis from the left column to view details and options.
               </div>
             )}
 

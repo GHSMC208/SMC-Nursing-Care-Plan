@@ -43,10 +43,28 @@ export interface InpatientRecord {
   carePlan2: NursingCarePlan;
 }
 
+export type ClinicalSpecialty =
+  | 'CCU/ICU'
+  | 'Medical'
+  | 'Surgical'
+  | 'Ophthalmology'
+  | 'Oncology'
+  | 'Gynaecology'
+  | 'Paediatric'
+  | 'ENT'
+  | 'Orthopedic'
+  | 'Vascular'
+  | 'Burn'
+  | 'Haematology'
+  | 'NICU'
+  | 'Psychiatry';
+
 export interface NandaItem {
   code?: string;
   diagnosis: string;
   domain: string;
+  category: ClinicalSpecialty | string;
+  categories?: string[];
   classCategory?: string;
   definition: string;
   definingCharacteristics?: string[];
