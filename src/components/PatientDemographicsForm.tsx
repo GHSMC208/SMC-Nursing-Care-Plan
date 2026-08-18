@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PatientDemographics } from '../types';
-import { User, Calendar, Bed, Hash, Stethoscope, Flag, Building2, Sparkles, DoorOpen } from 'lucide-react';
+import { User, Calendar, Bed, Hash, Stethoscope, Flag, Building2, Sparkles, DoorOpen, Edit3 } from 'lucide-react';
+
+const PRESET_NATIONALITIES = ['Bahraini', 'Indian', 'Bangladish', 'Pakistan', 'Philippines'];
 
 interface PatientDemographicsFormProps {
   patient: PatientDemographics;
@@ -15,6 +17,11 @@ export const PatientDemographicsForm: React.FC<PatientDemographicsFormProps> = (
   onLoadSample,
   onReset,
 }) => {
+  const isPresetNationality = PRESET_NATIONALITIES.includes(patient.nationality);
+  const [isManualNationality, setIsManualNationality] = useState<boolean>(
+    !isPresetNationality && Boolean(patient.nationality)
+  );
+
   const handleFieldChange = (field: keyof PatientDemographics, value: any) => {
     const updated = {
       ...patient,
@@ -150,29 +157,97 @@ export const PatientDemographicsForm: React.FC<PatientDemographicsFormProps> = (
             </label>
             <select
               id="patient-sex-select"
-              value={patient.sex}
+              value={patient.sex || ''}
               onChange={(e) => handleFieldChange('sex', e.target.value as any)}
               className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
             >
+              <option value="" disabled>-- Select Sex --</option>
               <option value="Female">Female</option>
               <option value="Male">Male</option>
-              <option value="Other">Other / Undisclosed</option>
             </select>
           </div>
 
           {/* 5. Nationality */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-              <Flag className="w-3.5 h-3.5 text-blue-600" /> Nationality *
-            </label>
-            <input
-              id="patient-nationality-input"
-              type="text"
-              placeholder="e.g., Bahraini, British, American"
-              value={patient.nationality}
-              onChange={(e) => handleFieldChange('nationality', e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-slate-400"
-            />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                <Flag className="w-3.5 h-3.5 text-blue-600" /> Nationality *
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsManualNationality(!isManualNationality)}
+                className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 underline"
+              >
+                <Edit3 className="w-3 h-3" />
+                {isManualNationality ? 'Choose from list' : 'Type other manually'}
+              </button>
+            </div>
+
+            {!isManualNationality ? (
+              <select
+                id="patient-nationality-select"
+                value={isPresetNationality ? patient.nationality : (patient.nationality ? 'Other' : '')}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === 'Other') {
+                    setIsManualNationality(true);
+                  } else {
+                    handleFieldChange('nationality', val);
+                  }
+                }}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+              >
+                <option value="" disabled>-- Select Nationality --</option>
+                <option value="Bahraini">Bahraini</option>
+                <option value="Indian">Indian</option>
+                <option value="Bangladish">Bangladish</option>
+                <option value="Pakistan">Pakistan</option>
+                <option value="Philippines">Philippines</option>
+                <option value="Other">Other / Custom Nationality (Type manually)...</option>
+              </select>
+            ) : (
+              <div className="space-y-1.5">
+                <div className="relative flex items-center">
+                  <input
+                    id="patient-nationality-input"
+                    type="text"
+                    placeholder="Type nationality manually..."
+                    value={patient.nationality}
+                    onChange={(e) => handleFieldChange('nationality', e.target.value)}
+                    className="w-full pl-3.5 pr-20 py-2.5 bg-white border border-blue-500 ring-1 ring-blue-500/20 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-slate-400"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsManualNationality(false)}
+                    className="absolute right-2 px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md border border-slate-300 transition-all"
+                  >
+                    List View
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Quick-Pick Preset Pills */}
+            <div className="mt-1.5 flex flex-wrap gap-1 items-center">
+              {PRESET_NATIONALITIES.map((nat) => (
+                <button
+                  key={nat}
+                  type="button"
+                  onClick={() => {
+                    handleFieldChange('nationality', nat);
+                    setIsManualNationality(false);
+                  }}
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border transition-all ${
+                    patient.nationality === nat
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
+                >
+                  {nat}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* 6. Date of Admission */}

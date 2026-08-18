@@ -2,7 +2,7 @@ export interface PatientDemographics {
   fullName: string;
   idNumber: string;
   age: number | string;
-  sex: 'Male' | 'Female' | 'Other';
+  sex: 'Male' | 'Female' | '';
   nationality: string;
   dateOfAdmission: string;
   wardNumber: string;

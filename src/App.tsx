@@ -31,15 +31,60 @@ import {
 
 const STORAGE_KEY = 'inpatient_nursing_care_plans_records';
 
+const BLANK_INITIAL_PATIENT: PatientDemographics = {
+  fullName: '',
+  idNumber: '',
+  age: '',
+  sex: '',
+  nationality: '',
+  dateOfAdmission: '',
+  wardNumber: '',
+  bedNumber: '',
+  wardAndBedNumber: '',
+  caringDoctor: '',
+  hospitalName: 'Salmaniya Medical Complex',
+  departmentUnit: '',
+};
+
+const BLANK_INITIAL_CARE_PLAN_1: NursingCarePlan = {
+  id: 'cp1-initial',
+  planNumber: 1,
+  title: 'Priority Nursing Care Plan #1',
+  nandaCode: '',
+  diagnosis: '',
+  domain: '',
+  dateOfOnset: '',
+  relatedFactors: '',
+  expectedOutcome: '',
+  interventions: '',
+  evaluation: '',
+  status: 'Active',
+};
+
+const BLANK_INITIAL_CARE_PLAN_2: NursingCarePlan = {
+  id: 'cp2-initial',
+  planNumber: 2,
+  title: 'Secondary Nursing Care Plan #2',
+  nandaCode: '',
+  diagnosis: '',
+  domain: '',
+  dateOfOnset: '',
+  relatedFactors: '',
+  expectedOutcome: '',
+  interventions: '',
+  evaluation: '',
+  status: 'Active',
+};
+
 export default function App() {
-  // Current active patient demographics
-  const [patient, setPatient] = useState<PatientDemographics>(SAMPLE_PATIENTS[0].patient);
+  // Current active patient demographics (starts completely empty)
+  const [patient, setPatient] = useState<PatientDemographics>(BLANK_INITIAL_PATIENT);
 
   // Care Plan 1 (Priority 1)
-  const [carePlan1, setCarePlan1] = useState<NursingCarePlan>(SAMPLE_PATIENTS[0].carePlan1);
+  const [carePlan1, setCarePlan1] = useState<NursingCarePlan>(BLANK_INITIAL_CARE_PLAN_1);
 
   // Care Plan 2 (Priority 2)
-  const [carePlan2, setCarePlan2] = useState<NursingCarePlan>(SAMPLE_PATIENTS[0].carePlan2);
+  const [carePlan2, setCarePlan2] = useState<NursingCarePlan>(BLANK_INITIAL_CARE_PLAN_2);
 
   // Active Tab for editing on mobile/single view: 'demographics' | 'plan1' | 'plan2' | 'split' | 'preview'
   const [activeTab, setActiveTab] = useState<'demographics' | 'plan1' | 'plan2' | 'split' | 'preview'>('demographics');
@@ -194,20 +239,19 @@ export default function App() {
 
   // Create new blank inpatient record
   const handleNewRecord = () => {
-    const today = new Date().toISOString().split('T')[0];
     setPatient({
       fullName: '',
       idNumber: '',
       age: '',
-      sex: 'Female',
+      sex: '',
       nationality: '',
-      dateOfAdmission: today,
+      dateOfAdmission: '',
       wardNumber: '',
       bedNumber: '',
       wardAndBedNumber: '',
       caringDoctor: '',
       hospitalName: patient.hospitalName || 'Salmaniya Medical Complex',
-      departmentUnit: patient.departmentUnit || 'Inpatient Nursing Care Unit',
+      departmentUnit: '',
     });
 
     setCarePlan1({
@@ -217,7 +261,7 @@ export default function App() {
       nandaCode: '',
       diagnosis: '',
       domain: '',
-      dateOfOnset: today,
+      dateOfOnset: '',
       relatedFactors: '',
       expectedOutcome: '',
       interventions: '',
@@ -232,7 +276,7 @@ export default function App() {
       nandaCode: '',
       diagnosis: '',
       domain: '',
-      dateOfOnset: today,
+      dateOfOnset: '',
       relatedFactors: '',
       expectedOutcome: '',
       interventions: '',
