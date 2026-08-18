@@ -237,53 +237,37 @@ export default function App() {
     }
   };
 
+  // Clear Demographics only
+  const handleClearDemographics = () => {
+    setPatient(BLANK_INITIAL_PATIENT);
+    showToast('Inpatient demographic fields cleared');
+  };
+
+  // Clear Care Plan 1
+  const handleClearPlan1 = () => {
+    setCarePlan1(BLANK_INITIAL_CARE_PLAN_1);
+    showToast('Care Plan #1 fields cleared');
+  };
+
+  // Clear Care Plan 2
+  const handleClearPlan2 = () => {
+    setCarePlan2(BLANK_INITIAL_CARE_PLAN_2);
+    showToast('Care Plan #2 fields cleared');
+  };
+
+  // Clear all fields (Demographics and both Care Plans)
+  const handleClearAllFields = () => {
+    setPatient(BLANK_INITIAL_PATIENT);
+    setCarePlan1(BLANK_INITIAL_CARE_PLAN_1);
+    setCarePlan2(BLANK_INITIAL_CARE_PLAN_2);
+    showToast('All fields cleared');
+  };
+
   // Create new blank inpatient record
   const handleNewRecord = () => {
-    setPatient({
-      fullName: '',
-      idNumber: '',
-      age: '',
-      sex: '',
-      nationality: '',
-      dateOfAdmission: '',
-      wardNumber: '',
-      bedNumber: '',
-      wardAndBedNumber: '',
-      caringDoctor: '',
-      hospitalName: patient.hospitalName || 'Salmaniya Medical Complex',
-      departmentUnit: '',
-    });
-
-    setCarePlan1({
-      id: `cp1-${Date.now()}`,
-      planNumber: 1,
-      title: 'Priority Nursing Care Plan #1',
-      nandaCode: '',
-      diagnosis: '',
-      domain: '',
-      dateOfOnset: '',
-      relatedFactors: '',
-      expectedOutcome: '',
-      interventions: '',
-      evaluation: '',
-      status: 'Active',
-    });
-
-    setCarePlan2({
-      id: `cp2-${Date.now()}`,
-      planNumber: 2,
-      title: 'Secondary Nursing Care Plan #2',
-      nandaCode: '',
-      diagnosis: '',
-      domain: '',
-      dateOfOnset: '',
-      relatedFactors: '',
-      expectedOutcome: '',
-      interventions: '',
-      evaluation: '',
-      status: 'Active',
-    });
-
+    setPatient(BLANK_INITIAL_PATIENT);
+    setCarePlan1(BLANK_INITIAL_CARE_PLAN_1);
+    setCarePlan2(BLANK_INITIAL_CARE_PLAN_2);
     setActiveTab('demographics');
     showToast('New blank inpatient care plan initialized');
   };
@@ -377,6 +361,17 @@ export default function App() {
             >
               <Plus className="w-4 h-4 text-slate-500" />
               <span className="hidden md:inline">New Patient</span>
+            </button>
+
+            <button
+              id="clear-all-fields-btn"
+              type="button"
+              onClick={handleClearAllFields}
+              className="px-3 py-2 rounded-lg bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-semibold text-xs border border-slate-300 hover:border-rose-300 transition-all flex items-center gap-1.5 shadow-xs"
+              title="Clear all demographic and care plan fields"
+            >
+              <RotateCcw className="w-4 h-4 text-rose-500" />
+              <span className="hidden md:inline">Clear All</span>
             </button>
 
             <button
@@ -531,7 +526,7 @@ export default function App() {
               patient={patient}
               onChange={setPatient}
               onLoadSample={handleLoadSample}
-              onReset={handleNewRecord}
+              onReset={handleClearDemographics}
             />
 
             <div className="flex justify-end gap-3">
@@ -556,6 +551,7 @@ export default function App() {
               onChange={setCarePlan1}
               onOpenNandaSearch={() => handleOpenNandaSearch(1)}
               onSwapWithOtherPlan={handleSwapPlans}
+              onClearPlan={handleClearPlan1}
             />
 
             <div className="flex items-center justify-between">
@@ -588,6 +584,7 @@ export default function App() {
               onChange={setCarePlan2}
               onOpenNandaSearch={() => handleOpenNandaSearch(2)}
               onSwapWithOtherPlan={handleSwapPlans}
+              onClearPlan={handleClearPlan2}
             />
 
             <div className="flex items-center justify-between">
@@ -621,6 +618,7 @@ export default function App() {
                 onChange={setCarePlan1}
                 onOpenNandaSearch={() => handleOpenNandaSearch(1)}
                 onSwapWithOtherPlan={handleSwapPlans}
+                onClearPlan={handleClearPlan1}
               />
               <CarePlanEditor
                 plan={carePlan2}
@@ -628,6 +626,7 @@ export default function App() {
                 onChange={setCarePlan2}
                 onOpenNandaSearch={() => handleOpenNandaSearch(2)}
                 onSwapWithOtherPlan={handleSwapPlans}
+                onClearPlan={handleClearPlan2}
               />
             </div>
           </div>

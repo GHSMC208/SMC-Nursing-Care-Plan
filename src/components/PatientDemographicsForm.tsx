@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PatientDemographics } from '../types';
-import { User, Calendar, Bed, Hash, Stethoscope, Flag, Building2, Sparkles, DoorOpen, Edit3 } from 'lucide-react';
+import { User, Calendar, Bed, Hash, Stethoscope, Flag, Building2, Sparkles, DoorOpen, Edit3, RotateCcw, Trash2 } from 'lucide-react';
 
 const PRESET_NATIONALITIES = ['Bahraini', 'Indian', 'Bangladish', 'Pakistan', 'Philippines'];
 
@@ -64,8 +64,23 @@ export const PatientDemographicsForm: React.FC<PatientDemographicsFormProps> = (
           </div>
         </div>
 
-        {/* Quick Sample Loader Chips */}
+        {/* Header Action Tools */}
         <div className="flex items-center gap-2 text-xs">
+          {/* Clear Fields Button */}
+          <button
+            id="clear-demographics-fields-btn"
+            type="button"
+            onClick={onReset}
+            className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 transition-all text-xs flex items-center gap-1.5 shadow-2xs"
+            title="Clear all demographic inputs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Clear Fields</span>
+          </button>
+
+          <span className="text-slate-300">|</span>
+
+          {/* Quick Sample Loader Chips */}
           <span className="text-slate-400 font-medium hidden sm:inline flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5 text-blue-600" /> Presets:
           </span>

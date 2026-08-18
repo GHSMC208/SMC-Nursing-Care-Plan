@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NursingCarePlan, NandaItem } from '../types';
 import { NANDA_DATABASE } from '../data/nandaData';
-import { Search, Calendar, AlertTriangle, Target, ClipboardList, CheckCircle2, Copy, Sparkles, BookOpen, RefreshCw, Trash2, ArrowRightLeft, UserCheck, Award } from 'lucide-react';
+import { Search, Calendar, AlertTriangle, Target, ClipboardList, CheckCircle2, Copy, Sparkles, BookOpen, RefreshCw, Trash2, ArrowRightLeft, UserCheck, Award, RotateCcw } from 'lucide-react';
 
 interface CarePlanEditorProps {
   plan: NursingCarePlan;
@@ -9,6 +9,7 @@ interface CarePlanEditorProps {
   onChange: (updated: NursingCarePlan) => void;
   onOpenNandaSearch: () => void;
   onSwapWithOtherPlan?: () => void;
+  onClearPlan?: () => void;
 }
 
 export const CarePlanEditor: React.FC<CarePlanEditorProps> = ({
@@ -17,6 +18,7 @@ export const CarePlanEditor: React.FC<CarePlanEditorProps> = ({
   onChange,
   onOpenNandaSearch,
   onSwapWithOtherPlan,
+  onClearPlan,
 }) => {
   const handleFieldChange = (field: keyof NursingCarePlan, value: any) => {
     onChange({
@@ -84,6 +86,19 @@ export const CarePlanEditor: React.FC<CarePlanEditorProps> = ({
 
         {/* Quick Actions Toolbar */}
         <div className="flex items-center gap-2">
+          {onClearPlan && (
+            <button
+              id={`clear-plan-${planNumber}-btn`}
+              type="button"
+              onClick={onClearPlan}
+              className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 transition-all text-xs flex items-center gap-1.5 shadow-2xs"
+              title={`Clear all fields in Care Plan #${planNumber}`}
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Clear Plan</span>
+            </button>
+          )}
+
           {onSwapWithOtherPlan && (
             <button
               id={`swap-plan-${planNumber}-btn`}
