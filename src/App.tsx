@@ -7,6 +7,7 @@ import { NandaSearchModal } from './components/NandaSearchModal';
 import { PrintableCarePlan } from './components/PrintableCarePlan';
 import { PrintPreviewModal } from './components/PrintPreviewModal';
 import { SavedRecordsModal } from './components/SavedRecordsModal';
+import governmentHospitalsLogo from './assets/images/bahrain_gov_hospitals_logo_1787046319692.jpg';
 import {
   FileSpreadsheet,
   Printer,
@@ -288,18 +289,21 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Brand & Title */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
-              <FileSpreadsheet className="w-5 h-5" />
-            </div>
+            <img
+              src={governmentHospitalsLogo}
+              alt="Government Hospitals Logo"
+              className="w-10 h-10 object-contain shrink-0 rounded-lg bg-white p-0.5 border border-slate-200 shadow-xs"
+              referrerPolicy="no-referrer"
+            />
             <div>
               <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight flex items-center gap-2">
                 Inpatient Care Plan Suite
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 hidden sm:inline">
-                  2 Plans / Inpatient
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200 hidden sm:inline">
+                  Government Hospitals • SMC
                 </span>
               </h1>
               <p className="text-xs text-slate-500">
-                Searchable NANDA-I taxonomy • Upper-right patient label • Print-ready A4 documentation
+                Standard NANDA-I taxonomy • Upper-right patient label • Print-ready A4 documentation
               </p>
             </div>
           </div>

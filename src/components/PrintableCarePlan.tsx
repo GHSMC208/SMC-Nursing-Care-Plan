@@ -1,6 +1,6 @@
 import React from 'react';
 import { PatientDemographics, NursingCarePlan } from '../types';
-import { Stethoscope, Building2 } from 'lucide-react';
+import governmentHospitalsLogo from '../assets/images/bahrain_gov_hospitals_logo_1787046319692.jpg';
 
 interface PrintableCarePlanProps {
   patient: PatientDemographics;
@@ -28,19 +28,26 @@ export const PrintableCarePlan: React.FC<PrintableCarePlanProps> = ({
       <div>
         {/* Top Header Grid: Left = Hospital Branding / Doc Title, Right = UPPER RIGHT INPATIENT IDENTIFICATION LABEL */}
         <div className="grid grid-cols-12 gap-3 pb-3 border-b-2 border-slate-900 print:border-black items-start">
-          {/* Left / Center: Clinical Header (7 Cols) */}
-          <div className="col-span-7 flex flex-col justify-between h-full space-y-1.5">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2 text-slate-900 print:text-black font-black tracking-tight text-base sm:text-lg uppercase">
-                <Building2 className="w-5 h-5 text-blue-900 print:text-black shrink-0" />
-                <span>{patient.hospitalName || 'SALMANIYA MEDICAL COMPLEX'}</span>
+          {/* Left / Center: Clinical Header with Government Hospitals Logo (7 Cols) */}
+          <div className="col-span-7 flex flex-col justify-between h-full space-y-2">
+            <div className="flex items-center gap-3.5">
+              <img
+                src={governmentHospitalsLogo}
+                alt="Kingdom of Bahrain Government Hospitals Logo"
+                className="w-20 h-20 object-contain shrink-0 rounded-xs"
+                referrerPolicy="no-referrer"
+              />
+              <div className="space-y-0.5 min-w-0">
+                <div className="text-[10px] font-black text-red-700 print:text-black uppercase tracking-wider leading-none">
+                  KINGDOM OF BAHRAIN • GOVERNMENT HOSPITALS
+                </div>
+                <div className="text-slate-950 print:text-black font-black tracking-tight text-base sm:text-lg uppercase leading-tight">
+                  {patient.hospitalName || 'SALMANIYA MEDICAL COMPLEX'}
+                </div>
               </div>
-              <p className="text-[11px] font-semibold text-slate-600 print:text-slate-800 uppercase tracking-wider">
-                {patient.departmentUnit || 'Department of Nursing & Inpatient Clinical Care'}
-              </p>
             </div>
 
-            <div className="mt-1.5 pt-1.5 border-t border-slate-300 print:border-slate-400">
+            <div className="pt-1.5 border-t border-slate-300 print:border-slate-400">
               <div className="flex items-center gap-2">
                 <span className="bg-slate-900 text-white text-[10px] font-black uppercase px-2 py-0.5 tracking-wider rounded-xs print:bg-black">
                   NURSING CARE PLAN
