@@ -226,17 +226,6 @@ export default function App() {
     showToast('Swapped Priority between Care Plan #1 and #2');
   };
 
-  // Load a sample preset
-  const handleLoadSample = (sampleId: string) => {
-    const found = SAMPLE_PATIENTS.find((s) => s.id === sampleId);
-    if (found) {
-      setPatient(found.patient);
-      setCarePlan1(found.carePlan1);
-      setCarePlan2(found.carePlan2);
-      showToast(`Loaded inpatient preset: ${found.patient.fullName}`);
-    }
-  };
-
   // Clear Demographics only
   const handleClearDemographics = () => {
     setPatient(BLANK_INITIAL_PATIENT);
@@ -525,7 +514,6 @@ export default function App() {
             <PatientDemographicsForm
               patient={patient}
               onChange={setPatient}
-              onLoadSample={handleLoadSample}
               onReset={handleClearDemographics}
             />
 
